@@ -1,6 +1,6 @@
 {
   "name": "DynamicUA",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Faking the user-agent for websites that pretend to require Chrome.",
   "permissions": [
     "cookies",
