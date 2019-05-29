@@ -62,7 +62,7 @@ chrome.windows.onCreated.addListener(function () {
                         /* Create notification click event*/
 
                         chrome.notifications.onClicked.addListener(function () {
-                            chrome.tabs.create({ url: 'https://github.com/tijmenennik/DynamicUA/' });
+                            chrome.tabs.create({ url: 'https://github.com/tijmenennik/DynamicUA/releases/' });
                         });
                     }
 
