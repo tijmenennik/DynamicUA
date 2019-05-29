@@ -1,3 +1,5 @@
+/* Replace the user agent for websites declared in the manifest */
+
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function (details) {
         for (var i = 0; i < details.requestHeaders.length; ++i) {
@@ -13,6 +15,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     ['blocking', 'requestHeaders']
 );
 
+
+
+/* Delete YouTube cookies when the extension is installed, so it works instantly */
+
 chrome.runtime.onInstalled.addListener(function () {
     chrome.cookies.getAll({ domain: 'youtube.com' }, function (cookies) {
         for (var i = 0; i < cookies.length; i++) {
@@ -20,3 +26,49 @@ chrome.runtime.onInstalled.addListener(function () {
         }
     });
 });
+
+
+
+/* Look if a new version is available */
+
+chrome.windows.onCreated.addListener(function () {
+    fetch('https://raw.githubusercontent.com/tijmenennik/DynamicUA/master/manifest.json')
+
+        .then(function (response) {
+            return response.json();
+        })
+
+        .then(function (data) {
+
+            /* Compare versions */
+
+            var currentVersion = chrome.runtime.getManifest().version;
+            var latestVersion = data.version;
+
+            if (currentVersion !== latestVersion) {
+
+                /* Create update notification */
+
+                chrome.notifications.create(
+                    'update-notification', {
+                        type: 'basic',
+                        iconUrl: 'images/icon128.png',
+                        title: 'A new version of DynamicUA is available via GitHub.',
+                        message: 'Click to view the new version.'
+                    },
+
+                    function () {
+
+                        /* Create notification click event*/
+
+                        chrome.notifications.onClicked.addListener(function () {
+                            chrome.tabs.create({ url: 'https://github.com/tijmenennik/DynamicUA/' });
+                        });
+                    }
+
+                );
+            }
+
+            console.log(data);
+        })
+})
