@@ -5,7 +5,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         for (var i = 0; i < details.requestHeaders.length; ++i) {
             if (details.requestHeaders[i].name === 'User-Agent') {
                 console.log('User agent is being replaced');
-                details.requestHeaders[i].value = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36';
+                details.requestHeaders[i].value = navigator.userAgent.split(' Edg')[0]; // Removes the Edge part of the user agent, but keeps all the other parts with the right version numbers
                 break;
             }
         }
