@@ -1,15 +1,18 @@
-/* Replace the user agent for websites declared in the manifest */
+/* Replace the user agent for websites declared in the manifest. */
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
-    function (details) {
-        for (var i = 0; i < details.requestHeaders.length; ++i) {
-            if (details.requestHeaders[i].name === 'User-Agent') {
+    details => {
+        const { requestHeaders } = details;
+        for (const header of requestHeaders) {
+            if (header.name === 'User-Agent') {
                 console.log('User agent is being replaced');
-                details.requestHeaders[i].value = navigator.userAgent.split(' Edg')[0]; // Removes the Edge part of the user agent, but keeps all the other parts with the right version numbers
+                // Remove the Edge part of the user agent, but keeps all the
+                // other parts with the right version numbers.
+                header.value = navigator.userAgent.split(' Edg')[0];
                 break;
-            }
+            } 
         }
-        return { requestHeaders: details.requestHeaders };
+        return { requestHeaders };
     },
     { urls: ['<all_urls>'] },
     ['blocking', 'requestHeaders']
