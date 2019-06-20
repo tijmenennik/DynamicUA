@@ -28,47 +28,35 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 
+/* Look if a new version is available. */
 
-/* Look if a new version is available */
+chrome.windows.onCreated.addListener(async () => {
+    const response = await fetch(
+        'https://raw.githubusercontent.com/tijmenennik/DynamicUA/master/manifest.json');
 
-chrome.windows.onCreated.addListener(function () {
-    fetch('https://raw.githubusercontent.com/tijmenennik/DynamicUA/master/manifest.json')
+    const data = await response.json();
+    
+    // Compare versions.
+    const currentVersion = chrome.runtime.getManifest().version;
+    const latestVersion = data.version;
 
-        .then(function (response) {
-            return response.json();
-        })
-
-        .then(function (data) {
-
-            /* Compare versions */
-
-            var currentVersion = chrome.runtime.getManifest().version;
-            var latestVersion = data.version;
-
-            if (currentVersion !== latestVersion) {
-
-                /* Create update notification */
-
-                chrome.notifications.create(
-                    'update-notification', {
-                        type: 'basic',
-                        iconUrl: 'images/icon128.png',
-                        title: 'A new version of DynamicUA is available via GitHub.',
-                        message: 'Click to view the new version.'
-                    },
-
-                    function () {
-
-                        /* Create notification click event*/
-
-                        chrome.notifications.onClicked.addListener(function () {
-                            chrome.tabs.create({ url: 'https://github.com/tijmenennik/DynamicUA/releases/' });
-                        });
-                    }
-
-                );
+    if (currentVersion !== latestVersion) {
+        // Create update notification.
+        chrome.notifications.create(
+            'update-notification', {
+                type: 'basic',
+                iconUrl: 'images/icon128.png',
+                title: 'A new version of DynamicUA is available via GitHub.',
+                message: 'Click to view the new version.'
+            },
+            () => {
+                // Create notification click event.
+                const url = 'https://github.com/tijmenennik/DynamicUA/releases/';
+                chrome.notifications.onClicked.addListener(() => {
+                    chrome.tabs.create({ url });
+                });
             }
-
-            console.log(data);
-        })
-})
+        );
+    }
+    console.log(data);
+});
