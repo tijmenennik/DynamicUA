@@ -16,13 +16,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 );
 
 
+/* Delete YouTube cookies when the extension is installed, so it works instantly. */
 
-/* Delete YouTube cookies when the extension is installed, so it works instantly */
-
-chrome.runtime.onInstalled.addListener(function () {
-    chrome.cookies.getAll({ domain: 'youtube.com' }, function (cookies) {
-        for (var i = 0; i < cookies.length; i++) {
-            chrome.cookies.remove({ url: 'https://www.youtube.com' + cookies[i].path, name: cookies[i].name });
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.cookies.getAll({ domain: 'youtube.com' }, cookies => {
+        for (const cookie of cookies) {
+            chrome.cookies.remove({ url: `https://www.youtube.com${cookie.path}`, name: cookie.name });
         }
     });
 });
